@@ -18,6 +18,7 @@ async function getStats() {
       .select('*')
       .order('date', { ascending: false })
       .limit(10)
+      .returns<{ id: string; workout_name: string; exercise_name: string; date: string; duration: number | null }[]>()
   ])
 
   return {

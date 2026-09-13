@@ -22,14 +22,16 @@ export default function ProgressPage() {
         .from('exercises')
         .select('*')
         .order('name')
+        .returns<Exercise[]>()
 
       const { data: historyData } = await supabase
         .from('exercise_history')
         .select('*')
         .order('date')
+        .returns<ExerciseHistory[]>()
 
       if (exercisesData && historyData) {
-        const exercisesWithHistory = exercisesData.map(exercise => ({
+        const exercisesWithHistory: ExerciseWithHistory[] = exercisesData.map(exercise => ({
           ...exercise,
           history: historyData.filter(h => h.exercise_id === exercise.id)
         }))
