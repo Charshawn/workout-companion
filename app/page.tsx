@@ -1,40 +1,70 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { formatDateTime } from '@/lib/utils'
 import { Activity, Dumbbell, TrendingUp, Calendar } from 'lucide-react'
 import Link from 'next/link'
+import { ProtectedPage } from '@/components/ProtectedPage'
+import { PINDisplay } from '@/components/PINDisplay'
+import { getPIN } from '@/lib/auth'
+import { WorkoutSession } from '@/lib/types'
 
-async function getStats() {
-  const [
-    { count: totalWorkouts },
-    { count: totalExercises },
-    { count: totalSessions },
-    { data: recentSessions }
-  ] = await Promise.all([
-    supabase.from('workouts').select('*', { count: 'exact', head: true }),
-    supabase.from('exercises').select('*', { count: 'exact', head: true }),
-    supabase.from('workout_sessions').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('workout_sessions')
-      .select('*')
-      .order('date', { ascending: false })
-      .limit(10)
-      .returns<{ id: string; workout_name: string; exercise_name: string; date: string; duration: number | null }[]>()
-  ])
-
-  return {
-    totalWorkouts: totalWorkouts ?? 0,
-    totalExercises: totalExercises ?? 0,
-    totalSessions: totalSessions ?? 0,
-    recentSessions: recentSessions ?? []
-  }
+interface Stats {
+  totalWorkouts: number
+  totalExercises: number
+  totalSessions: number
+  recentSessions: WorkoutSession[]
 }
 
-export default async function Home() {
-  const stats = await getStats()
+export default function Home() {
+  const [stats, setStats] = useState<Stats>({
+    totalWorkouts: 0,
+    totalExercises: 0,
+    totalSessions: 0,
+    recentSessions: []
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadStats() {
+      const userPin = getPIN()
+      if (!userPin) return
+
+      const [
+        { count: totalWorkouts },
+        { count: totalExercises },
+        { count: totalSessions },
+        { data: recentSessions }
+      ] = await Promise.all([
+        supabase.from('workouts').select('*', { count: 'exact', head: true }).eq('user_pin', userPin),
+        supabase.from('exercises').select('*', { count: 'exact', head: true }).eq('user_pin', userPin),
+        supabase.from('workout_sessions').select('*', { count: 'exact', head: true }).eq('user_pin', userPin),
+        supabase
+          .from('workout_sessions')
+          .select('*')
+          .eq('user_pin', userPin)
+          .order('date', { ascending: false })
+          .limit(10)
+          .returns<WorkoutSession[]>()
+      ])
+
+      setStats({
+        totalWorkouts: totalWorkouts ?? 0,
+        totalExercises: totalExercises ?? 0,
+        totalSessions: totalSessions ?? 0,
+        recentSessions: recentSessions ?? []
+      })
+      setLoading(false)
+    }
+
+    loadStats()
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <ProtectedPage>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -100,7 +130,11 @@ export default async function Home() {
             Recent Workouts
           </h2>
 
-          {stats.recentSessions.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            </div>
+          ) : stats.recentSessions.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
               <Dumbbell className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <p className="text-lg">No workouts yet. Start tracking on your Watch!</p>
@@ -130,7 +164,9 @@ export default async function Home() {
           )}
         </div>
       </div>
+      <PINDisplay />
     </div>
+    </ProtectedPage>
   )
 }
 

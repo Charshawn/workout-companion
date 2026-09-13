@@ -29,6 +29,7 @@ export interface Workout {
   id: string
   name: string
   created_at: string
+  user_pin: string
 }
 
 export interface Exercise {
@@ -41,6 +42,7 @@ export interface Exercise {
   goal: number | null
   goal_reps: number | null
   created_at: string
+  user_pin: string
 }
 
 export interface ExerciseHistory {
@@ -50,6 +52,7 @@ export interface ExerciseHistory {
   reps: number
   sets: number
   date: string
+  user_pin: string
 }
 
 export interface WorkoutSession {
@@ -58,4 +61,5 @@ export interface WorkoutSession {
   exercise_name: string
   date: string
   duration: number | null
+  user_pin: string
 }

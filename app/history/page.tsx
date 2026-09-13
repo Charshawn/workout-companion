@@ -6,6 +6,9 @@ import { WorkoutSession } from '@/lib/types'
 import { formatDateTime } from '@/lib/utils'
 import { Calendar, Search, Filter } from 'lucide-react'
 import Link from 'next/link'
+import { ProtectedPage } from '@/components/ProtectedPage'
+import { PINDisplay } from '@/components/PINDisplay'
+import { getPIN } from '@/lib/auth'
 
 export default function HistoryPage() {
   const [sessions, setSessions] = useState<WorkoutSession[]>([])
@@ -16,9 +19,13 @@ export default function HistoryPage() {
 
   useEffect(() => {
     async function loadSessions() {
+      const userPin = getPIN()
+      if (!userPin) return
+
       const { data } = await supabase
         .from('workout_sessions')
         .select('*')
+        .eq('user_pin', userPin)
         .order('date', { ascending: false })
 
       if (data) {
@@ -51,6 +58,7 @@ export default function HistoryPage() {
   const uniqueWorkouts = Array.from(new Set(sessions.map(s => s.workout_name)))
 
   return (
+    <ProtectedPage>
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
@@ -171,6 +179,8 @@ export default function HistoryPage() {
           </div>
         )}
       </div>
+      <PINDisplay />
     </div>
+    </ProtectedPage>
   )
 }

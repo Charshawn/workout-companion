@@ -7,6 +7,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { TrendingUp, Activity } from 'lucide-react'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
+import { ProtectedPage } from '@/components/ProtectedPage'
+import { PINDisplay } from '@/components/PINDisplay'
+import { getPIN } from '@/lib/auth'
 
 interface ExerciseWithHistory extends Exercise {
   history: ExerciseHistory[]
@@ -18,15 +21,20 @@ export default function ProgressPage() {
 
   useEffect(() => {
     async function loadData() {
+      const userPin = getPIN()
+      if (!userPin) return
+
       const { data: exercisesData } = await supabase
         .from('exercises')
         .select('*')
+        .eq('user_pin', userPin)
         .order('name')
         .returns<Exercise[]>()
 
       const { data: historyData } = await supabase
         .from('exercise_history')
         .select('*')
+        .eq('user_pin', userPin)
         .order('date')
         .returns<ExerciseHistory[]>()
 
@@ -44,6 +52,7 @@ export default function ProgressPage() {
   }, [])
 
   return (
+    <ProtectedPage>
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
@@ -167,6 +176,8 @@ export default function ProgressPage() {
           </div>
         )}
       </div>
+      <PINDisplay />
     </div>
+    </ProtectedPage>
   )
 }
