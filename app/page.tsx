@@ -29,6 +29,7 @@ export default function Home() {
   useEffect(() => {
     async function loadStats() {
       const userPin = getPIN()
+      console.log('Loading stats with PIN:', userPin)
       if (!userPin) return
 
       const [
@@ -48,6 +49,13 @@ export default function Home() {
           .limit(10)
           .returns<WorkoutSession[]>()
       ])
+
+      console.log('Query results:', {
+        totalWorkouts,
+        totalExercises,
+        totalSessions,
+        recentSessionsCount: recentSessions?.length
+      })
 
       setStats({
         totalWorkouts: totalWorkouts ?? 0,
