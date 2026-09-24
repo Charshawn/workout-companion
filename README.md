@@ -61,12 +61,15 @@ Apple Watch App → Saves workout → Supabase Database
 2. Go to [vercel.com](https://vercel.com)
 3. Click "Import Project"
 4. Select your GitHub repository
-5. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+5. **⚠️ IMPORTANT:** Add environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL` = Your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Your Supabase anon key
+   - These must be set in: Project Settings → Environment Variables
 6. Click "Deploy"
 
 Your dashboard will be live at `https://your-project.vercel.app` in under a minute!
+
+**Note:** The `.env.local` file is gitignored and won't be deployed. You MUST add the environment variables through the Vercel dashboard for the production site to work.
 
 ### Custom Domain (Optional)
 
