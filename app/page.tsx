@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { ProtectedPage } from '@/components/ProtectedPage'
 import { PINDisplay } from '@/components/PINDisplay'
 import { ExerciseGraphCarousel } from '@/components/ExerciseGraphCarousel'
+import { WorkoutInsights } from '@/components/WorkoutInsights'
 import { getPIN } from '@/lib/auth'
 import { WorkoutSession } from '@/lib/types'
 
@@ -91,12 +92,6 @@ export default function Home() {
             Dashboard
           </Link>
           <Link
-            href="/progress"
-            className="px-6 py-3 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
-          >
-            Progress
-          </Link>
-          <Link
             href="/history"
             className="px-6 py-3 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
           >
@@ -130,6 +125,11 @@ export default function Home() {
             value={stats.totalSessions > 0 ? Math.min(stats.totalSessions, 7) : 0}
             color="bg-orange-500/10 text-orange-400"
           />
+        </div>
+
+        {/* Workout Insights */}
+        <div className="mb-12">
+          <WorkoutInsights />
         </div>
 
         {/* Progress Graph Carousel */}

@@ -78,12 +78,6 @@ export default function HistoryPage() {
             Dashboard
           </Link>
           <Link
-            href="/progress"
-            className="px-6 py-3 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
-          >
-            Progress
-          </Link>
-          <Link
             href="/history"
             className="px-6 py-3 bg-blue-600 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
