@@ -7,6 +7,7 @@ import { Activity, Dumbbell, TrendingUp, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { ProtectedPage } from '@/components/ProtectedPage'
 import { PINDisplay } from '@/components/PINDisplay'
+import { ExerciseGraphCarousel } from '@/components/ExerciseGraphCarousel'
 import { getPIN } from '@/lib/auth'
 import { WorkoutSession } from '@/lib/types'
 
@@ -129,6 +130,11 @@ export default function Home() {
             value={stats.totalSessions > 0 ? Math.min(stats.totalSessions, 7) : 0}
             color="bg-orange-500/10 text-orange-400"
           />
+        </div>
+
+        {/* Progress Graph Carousel */}
+        <div className="mb-12">
+          <ExerciseGraphCarousel />
         </div>
 
         {/* Recent Workouts */}
