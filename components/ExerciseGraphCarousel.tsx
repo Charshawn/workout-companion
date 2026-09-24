@@ -93,6 +93,8 @@ export function ExerciseGraphCarousel() {
   const chartData = currentHistory.map(h => ({
     date: formatDate(h.date),
     weight: h.weight,
+    sets: h.sets,
+    reps: h.reps,
     volume: h.weight * h.sets * h.reps
   }))
 
@@ -262,6 +264,13 @@ export function ExerciseGraphCarousel() {
                       backgroundColor: '#1F2937',
                       border: '1px solid #374151',
                       borderRadius: '8px'
+                    }}
+                    formatter={(value: any, name: any, props: any) => {
+                      if (name === 'Weight (lbs)' && props.payload) {
+                        const { sets, reps } = props.payload
+                        return [`${value} lbs (${sets} × ${reps})`, name]
+                      }
+                      return [value, name]
                     }}
                   />
                   <Legend />
